@@ -9,12 +9,13 @@ from log import get_logger
 
 logger = get_logger(__name__)
 
-# TODO: should this be LIFO to refrect the latest state?
+# TODO: should this be LIFO to reflect the latest state?
 q = queue.Queue()  # infinite FIFO queue
 
 downsample = 10
 window = 200  # visible time slot (ms)
 sample_rate = 44100  # 44.1 kHz
+device = 1  # machine dependent
 channels = 2
 mapping = [i for i in range(channels)]
 interval = 30  # minimum time between plot updates (ms)
@@ -68,6 +69,7 @@ if __name__ == '__main__':
     lines = ax.plot(plotdata)  # list of Line2D object
 
     stream = sd.InputStream(samplerate=sample_rate, callback=audio_callback,
+                            device=device,
                             channels=channels)
     ani = FuncAnimation(fig, update_plot, interval=interval, blit=True,
                         init_func=init_plot)
