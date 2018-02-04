@@ -32,8 +32,12 @@ def audio_callback(indata, frames, time, status):
 
 def init_plot():
     """ Initialise the plot area """
-    ax.set_ylim((-1.0, 1.0))
-    ax.axhline(0, color='black', lw=1)
+    for sub_ax in ax:
+        sub_ax.set_ylim((-1.0, 1.0))
+        sub_ax.axhline(0, color='black', lw=1)
+
+    ax[0].set_ylabel('Amplitude (L)')
+    ax[1].set_ylabel('Amplitude (R)')
 
     return lines
 
@@ -65,8 +69,11 @@ if __name__ == '__main__':
     length = int(window * sample_rate / 1000 / downsample)
     plotdata = np.zeros((length, channels))
 
-    fig, ax = plt.subplots()
-    lines = ax.plot(plotdata)  # list of Line2D object
+    fig, ax = plt.subplots(2, 1)
+
+    # list of Line2D object
+    lines = [sub_ax.plot(plotdata[:, idx])[0]
+             for idx, sub_ax in enumerate(ax)]
 
     stream = sd.InputStream(samplerate=sample_rate, callback=audio_callback,
                             device=device,
